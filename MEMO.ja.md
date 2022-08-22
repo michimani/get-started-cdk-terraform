@@ -58,7 +58,7 @@ cdktf init --template=go --local
 
 [Build AWS Infrastructure with CDK for Terraform | Terraform - HashiCorp Learn](https://learn.hashicorp.com/tutorials/terraform/cdktf-build)
 
-AWS のプロバイダを追加。
+## AWS のプロバイダを追加
 
 ```json: cdktf.json
 {
@@ -85,3 +85,124 @@ cdktf get
 他のプロバイダは下記参照。
 
 [HashiCorp: cdktf-provider-](https://github.com/orgs/hashicorp/repositories?q=cdktf-provider-)
+
+## S3 Bucket を定義
+
+```go
+package main
+
+import (
+	"cdk.tf/go/stack/generated/aws"
+	"cdk.tf/go/stack/generated/aws/s3"
+	"github.com/aws/constructs-go/constructs/v10"
+	"github.com/aws/jsii-runtime-go"
+	"github.com/hashicorp/terraform-cdk-go/cdktf"
+)
+
+func main() {
+	app := cdktf.NewApp(nil)
+
+	NewMyStack(app, "cdktfsample")
+
+	app.Synth()
+}
+
+// NewMyStack は S3 Bucket を作成する Terraform Stack を返す
+func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
+	// Terraform Stack の初期化
+	stack := cdktf.NewTerraformStack(scope, &id)
+
+	// Provider の設定
+	aws.NewAwsProvider(stack, jsii.String("AWS"), &aws.AwsProviderConfig{
+		Region: jsii.String("ap-northeast-1"),
+	})
+
+	// S3 Bucket を定義
+	s3.NewS3Bucket(stack, jsii.String(id+"SampleBucket"), &s3.S3BucketConfig{
+		Bucket: jsii.String("cdktf-sample-bucket"),
+	})
+
+	return stack
+}
+```
+
+## Terraform の定義ファイルを生成
+
+```bash
+cdktf synth
+```
+
+`cdktf.out` ディレクトリ以下に `.tf.json` ファイルが生成される。今回は下記のようなファイルが生成される。
+
+```json
+{
+  "//": {
+    "metadata": {
+      "backend": "local",
+      "stackName": "cdktfsample",
+      "version": "0.12.0"
+    },
+    "outputs": {
+    }
+  },
+  "provider": {
+    "aws": [
+      {
+        "region": "ap-northeast-1"
+      }
+    ]
+  },
+  "resource": {
+    "aws_s3_bucket": {
+      "cdktfsampleSampleBucket": {
+        "//": {
+          "metadata": {
+            "path": "cdktfsample/cdktfsampleSampleBucket",
+            "uniqueId": "cdktfsampleSampleBucket"
+          }
+        },
+        "bucket": "cdktf-sample-bucket"
+      }
+    }
+  },
+  "terraform": {
+    "backend": {
+      "local": {
+        "path": "/path/to/get-started-cdk-terraform/cdktfsample/terraform.cdktfsample.tfstate"
+      }
+    },
+    "required_providers": {
+      "aws": {
+        "source": "aws",
+        "version": "4.27.0"
+      }
+    }
+  }
+}
+```
+
+## デプロイ
+
+```bash
+cdktf deploy
+```
+
+plan の結果が表示され、続けるかどうかを聞かれる。
+
+```
+...
+             Plan: 1 to add, 0 to change, 0 to destroy.
+             
+             ─────────────────────────────────────────────────────────────────────────────
+cdktfsample  Saved the plan to: plan
+
+             To perform exactly these actions, run the following command to apply:
+             terraform apply "plan"
+
+Please review the diff output above for cdktfsample
+❯ Approve  Applies the changes outlined in the plan.
+  Dismiss
+  Stop
+```
+
+`Approve` で apply される。
