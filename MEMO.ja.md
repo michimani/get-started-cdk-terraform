@@ -53,3 +53,35 @@ cdktf init --template=go --local
 ├── main.go
 └── main_test.go
 ```
+
+# AWS のリソースを管理する
+
+[Build AWS Infrastructure with CDK for Terraform | Terraform - HashiCorp Learn](https://learn.hashicorp.com/tutorials/terraform/cdktf-build)
+
+AWS のプロバイダを追加。
+
+```json: cdktf.json
+{
+  "language": "go",
+  "app": "go run main.go",
+  "codeMakerOutput": "generated",
+  "projectId": "928f31a4-f624-4a03-9dd1-fceefa5c0845",
+  "sendCrashReports": "true",
+  "terraformProviders": [
+    "aws@~>4.0"
+  ],
+  "terraformModules": [],
+  "context": {
+    "excludeStackIdFromLogicalIds": "true",
+    "allowSepCharsInLogicalIds": "true"
+  }
+}
+```
+
+```bash
+cdktf get
+```
+
+他のプロバイダは下記参照。
+
+[HashiCorp: cdktf-provider-](https://github.com/orgs/hashicorp/repositories?q=cdktf-provider-)

@@ -4,7 +4,9 @@
   "codeMakerOutput": "generated",
   "projectId": "928f31a4-f624-4a03-9dd1-fceefa5c0845",
   "sendCrashReports": "true",
-  "terraformProviders": [],
+  "terraformProviders": [
+    "aws@~>4.0"
+  ],
   "terraformModules": [],
   "context": {
     "excludeStackIdFromLogicalIds": "true",
