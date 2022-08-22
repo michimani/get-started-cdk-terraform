@@ -206,3 +206,42 @@ Please review the diff output above for cdktfsample
 ```
 
 `Approve` で apply される。
+
+## 内容を変更
+
+再度 `cdktf synth` を実行して、 `cdktf diff` で差分を確認。
+
+```bash
+cdktf diff
+```
+
+```
+...
+cdktfsample  Terraform used the selected providers to generate the following execution
+             plan. Resource actions are indicated with the following symbols:
+             ~ update in-place
+             
+             Terraform will perform the following actions:
+cdktfsample    # aws_s3_bucket.cdktfsampleSampleBucket (cdktfsampleSampleBucket) will be updated in-place
+               ~ resource "aws_s3_bucket" "cdktfsampleSampleBucket" {
+             id                          = "cdktf-sample-bucket"
+             ~ tags                        = {
+             + "Name" = "Bucket provisioned by CDKTF"
+             }
+             ~ tags_all                    = {
+             + "Name" = "Bucket provisioned by CDKTF"
+             }
+             # (9 unchanged attributes hidden)
+
+
+             # (2 unchanged blocks hidden)
+             }
+
+             Plan: 0 to add, 1 to change, 0 to destroy.
+```
+
+デプロイ。
+
+```bash
+cdktf deploy
+```

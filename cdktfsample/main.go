@@ -29,6 +29,9 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	// S3 Bucket を定義
 	s3.NewS3Bucket(stack, jsii.String(id+"SampleBucket"), &s3.S3BucketConfig{
 		Bucket: jsii.String("cdktf-sample-bucket"),
+		Tags: &map[string]*string{
+			"Name": jsii.String("Bucket provisioned by CDKTF"),
+		},
 	})
 
 	return stack
