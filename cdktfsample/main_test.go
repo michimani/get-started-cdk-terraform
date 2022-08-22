@@ -1,36 +1,33 @@
 package main
 
-// The tests below are example tests, you can find more information at
-// https://cdk.tf/testing
+import (
+	"testing"
 
-/*
-var stack = NewMyApplicationsAbstraction(cdktf.Assertions_App(nil), "stack")
-var synth = cdktf.Assertions_Synth(stack)
+	"cdk.tf/go/stack/generated/aws/s3"
+	"github.com/aws/jsii-runtime-go"
+	"github.com/hashicorp/terraform-cdk-go/cdktf"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
 
-func TestShouldContainContainer(t *testing.T){
-	assertion := cdktf.Assertions_ToHaveResource(synth, docker.Container_TfResourceType())
+func TestShouldContainNewS3Bucket(t *testing.T) {
+	stack := NewMyStack(cdktf.Testing_App(nil), "cdktfsample")
+	synth := cdktf.Testing_Synth(stack)
+	require.NotNil(t, synth)
 
-	if !*assertion  {
-		t.Error(assertion.Message())
+	resourceType := s3.S3Bucket_TfResourceType()
+	require.NotNil(t, resourceType)
+
+	properties := &map[string]interface{}{
+		"bucket": jsii.String("cdktf-sample-bucket"),
+		"tags": &struct {
+			Name string
+		}{
+			Name: "Bucket provisioned by CDKTF",
+		},
 	}
+
+	bucketExists := cdktf.Testing_ToHaveResourceWithProperties(synth, resourceType, properties)
+
+	assert.True(t, *bucketExists)
 }
-
-func TestShouldUseUbuntuImage(t *testing.T){
-	properties := map[string]interface{}{
-		"name": "ubuntu:latest",
-	}
-	assertion := cdktf.Assertions_ToHaveResourceWithProperties(synth, docker.Image_TfResourceType(), &properties)
-
-	if !*assertion  {
-		t.Error(assertion.Message())
-	}
-}
-
-func TestCheckValidity(t *testing.T){
-	assertion := cdktf.Testing_ToBeValidTerraform(cdktf.Testing_FullSynth(stack))
-
-	if !*assertion  {
-		t.Error(assertion.Message())
-	}
-}
-*/

@@ -245,3 +245,40 @@ cdktfsample    # aws_s3_bucket.cdktfsampleSampleBucket (cdktfsampleSampleBucket)
 ```bash
 cdktf deploy
 ```
+
+## テスト
+
+下記のコードで
+
+- S3 Bucket のリソースが存在すること
+- リソースのプロパティとして、指定したバケット名、タグが定義されていること
+
+をテストする。
+
+```go
+func TestShouldContainNewS3Bucket(t *testing.T) {
+	stack := NewMyStack(cdktf.Testing_App(nil), "cdktfsample")
+	synth := cdktf.Testing_Synth(stack)
+	require.NotNil(t, synth)
+
+	resourceType := s3.S3Bucket_TfResourceType()
+	require.NotNil(t, resourceType)
+
+	properties := &map[string]interface{}{
+		"bucket": jsii.String("cdktf-sample-bucket"),
+		"tags": &struct {
+			Name string
+		}{
+			Name: "Bucket provisioned by CDKTF",
+		},
+	}
+
+	bucketExists := cdktf.Testing_ToHaveResourceWithProperties(synth, resourceType, properties)
+
+	assert.True(t, *bucketExists)
+}
+```
+
+```bash
+go test .
+```
