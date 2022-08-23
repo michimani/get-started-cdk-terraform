@@ -15,9 +15,6 @@ func TestShouldContainNewS3Bucket(t *testing.T) {
 	synth := cdktf.Testing_Synth(stack)
 	require.NotNil(t, synth)
 
-	resourceType := s3.S3Bucket_TfResourceType()
-	require.NotNil(t, resourceType)
-
 	properties := &map[string]interface{}{
 		"bucket": jsii.String("cdktf-sample-bucket"),
 		"tags": &struct {
@@ -27,7 +24,7 @@ func TestShouldContainNewS3Bucket(t *testing.T) {
 		},
 	}
 
-	bucketExists := cdktf.Testing_ToHaveResourceWithProperties(synth, resourceType, properties)
+	bucketExists := cdktf.Testing_ToHaveResourceWithProperties(synth, s3.S3Bucket_TfResourceType(), properties)
 
 	assert.True(t, *bucketExists)
 }
